@@ -1,0 +1,117 @@
+\documentclass[12pt]{book}
+\usepackage{a4wide}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
+%\textwidth = 6.5 in
+%\textheight = 9 in
+%\oddsidemargin = 0.0 in
+%\evensidemargin = 0.0 in
+%\topmargin = 0.0 in
+%\headheight = 0.0 in
+%\headsep = 0.0 in
+%\parskip = 0.2in
+%\parindent = 0.0in
+\bibliographystyle{unsrt}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}{Definition}
+
+\title{\textsc{AmideImaps Manual\\ Version 1.0.0}}
+\author{Santanu Roy and Thomas la Cour Jansen\\ Rijksuniversiteit Groningen}
+\date{\today}
+\begin{document}
+\maketitle
+
+\chapter{Program descriptions}
+The program calculating the amide-I Hamiltonian and transition dipole moments ($\mu_{x}^{eg}$, $\mu_{y}^{eg}$, and $\mu_{z}^{eg}$)
+\begin{description}
+\item [AmideImaps] 
+Extracts Hamiltonian and transition dipole trajectories from a Gromacs MD trajectory. In the command line if only $AmideImaps$ is used, the directory of execution must contain the default files 
+`input', `traj.xtc', and `topol.tpr'. The first file is the default input file for the program, the second and the third ones are the defaults Gromacs trajectory and topology files, respectively. One needs to execute the following command to use different names for these files:
+\\\\
+\textit{AmideImaps -i inputFileName -f trajectory.xtc -s modelSystem.tpr -b startingFrame -e endFrame}
+\\\\
+Execute \textit{AmideImaps -h 1} for help. Use \textit{ -b} and \textit{-e} options only if a part of an MD trajectory is used.  
+\end{description}
+
+\section{Installation}
+\subsection{Gromacs-4.6.X versions (recommended)} The AmideImaps.c and AmideImaps.h files must be placed in the Gromacs subdirectory src/tools and these files must be added in the CMakeLists.txt file. Create a build directory in Gromacs-4.6.X and follow the installation procedure as described in the following website. 
+\\\\
+http://www.gromacs.org/Documentation/Installation\_Instructions
+
+\subsection{Gromacs-4.5.X versions} The AmideImaps.c and AmideImaps.h files must be placed in the Gromacs subdirectory src/tools and the files must be added in the make file. Then the configure script must be run in the main directory followed by `make' and `make install' to copy the executables to a desired bin directory as described in the Gromacs installation.
+
+\section{Different Schemes}
+\begin{description}
+\item[Jansen]
+This scheme is applicable to secondary (CONH)\cite{Jansen.2006.JCP.124.044502,Jansen.2006.JCP.125.044312} and tertiary (CONC$_{\delta}$, amide bond preceding proline\cite{Roy.2011.JCP.135.234507}) units on the backbone of a peptide.
+\\\\
+(a) Jansen's electrostatic map for frequencies + Jansen's Ramachandran angles based corrections to the frequencies due to effects from nearest neighbors (NNFS).
+\\\\
+(b) Jansen's electrostatic map for transition dipoles.
+\\\\
+(c) Jansen's parametrization for transition charge coupling (TCC) and Jansen's nearest neighbor coupling (NNC) 
+\\\\
+Recommended force fields for MD simulations: OPLSAA, CHARMM-27, AMBER-99sb, and GROMOS-53a6. Jansen scheme overestimates frequencies of a secondary amide unit by 14 cm$^{-1}$, but correctly produces frequencies of a tertiary unit, i.e, a unit preceding proline. The output Hamiltonian must be corrected by red-shifting frequencies of secondary units using the $translate$ program.
+
+\item[Skinner]
+This scheme is applicable to secondary (CONH)\cite{Wang.2011.JPCB.115.3713} and tertiary (CONC$_{\delta}$, amide bond preceding proline\cite{Roy.2011.JCP.135.234507}) units on the backbone of a peptide. Additionally, primary amide units on the side chain of GLN and ASN can also be treated.\cite{Wang.2011.JPCB.115.3713} 
+\\\\
+(a) Skinner's empirical map for frequencies\cite{Wang.2011.JPCB.115.3713} + Jansen's Ramachandran angles based corrections to the frequencies due to effects from nearest neighbors (NNFS).\cite{Jansen.2006.JCP.125.044312,Roy.2011.JCP.135.234507}
+\\\\
+(b) Torii's transition dipoles.\cite{Torii.1998.JRS.29.81}
+\\\\
+(c) Torii's parametrization for transition dipole coupling (TDC)\cite{Torii.1998.JRS.29.81} and Jansen's nearest neighbor coupling (NNC).\cite{Jansen.2006.JCP.125.044312,Roy.2011.JCP.135.234507} 
+\\\\
+Recommended force fields for MD simulations:  GROMOS-53a6 only.
+
+\item[Tokmakoff]
+This scheme is applicable to secondary (CONH) and tertiary (CONC$_{\delta}$, amide bond preceding proline) units on the backbone of a peptide.\cite{Reppert.2013.138.134116}
+\\\\
+(a) Tokmakoff's empirical map for frequencies.\cite{Reppert.2013.138.134116}
+\\\\
+(b) Jansen's electrostatic map for transition dipoles.\cite{Jansen.2006.JCP.124.044502,Roy.2011.JCP.135.234507}
+\\\\
+(c) Jansen's parametrization for transition charge coupling (TCC) and Jansen's nearest neighbor coupling (NNC).\cite{Jansen.2006.JCP.124.044502,Jansen.2006.JCP.125.044312,Roy.2011.JCP.135.234507} 
+\\\\
+Recommended force fields for MD simulations: CHARMM-27.
+This scheme has not been tested with \textit{AmideImaps}, users may want to use it on their own risk. 
+
+
+\end{description}
+
+\section{Map program for proteins}
+The input file ($inputFileName$) included the following KEYWORDS:
+\begin{description}
+\item [Forcefield] [OPLSAA]  \\\\  Ignore this keyword if a different force field is used.
+\item [Peptidetype] [Cyclic]   \\\\ Ignore this keyword if a non-cyclic peptide (N- and C- terminus of a peptide chain are not connected).
+\item [Prolinetype] [DProline]  \\\\ Ignore this keyword for a peptide without proline or for a peptide with LProline. 
+\item [Residues] [The number of peptide residues]
+\item [BackboneAmidebonds] [The total number of backbone amide bonds]
+\item [SidechainAmidebonds] [The total number of side chain amide bonds]
+\item [TotalAmidebonds] [The total number of amide bonds]  \\\\ Sum of backbone and side chain amidebonds.
+\item [COperChain] [The number of backbone amide bonds per peptide chain]  \\\\ For a peptide with multiple chains ($n$), n$\times$COperChain=BackboneAmdebonds.
+\item [EstaticMap] [Skinner/Jansen/Tokmakoff]  \\\\ Scheme for electrostatic maps for frequency calculation.
+\item [JansenMapfile] [JansenMap.dat] \\\\ Frequency the map file for a secondary unit using Jansen scheme
+\item [RoyMapfile][ProlineMap.dat] \\\\ Frequency map file for a unit preceding proline using Jansen or Skinner scheme
+\item [SkinnerMapfile] [SkinnerMap.dat] \\\\ Frequency map file for secondary amide units on the backbone and primary amide units on the side chain using Skinner scheme.
+\item [TokmakoffMapfile] [TokmakoffMapCHARMM27.dat] \\\\ Frequency map file for the secondary and tertiary amide I units using Tokmakoff scheme.
+\item [NNTreatment] [Map] \\\\ Accounting for the effects from nearest neighbors; ignore this keyword if only electrostatic effects from non-nearest neighbors are considered.
+\item [Cutoff] [Distance in nm] \\\\ Cutoff for electric field calculation: for the Skinner scheme it is 2.0 nm, for the Jansen Scheme it is close to but smaller than the half of the simulation box size, for the Tokmakoff scheme cutoff dependency has not been tested, user may follow the Jansen scheme or play around.
+\item [TransitionDipole][Torii]  \\\\ This key word must be used if the Skinner scheme is opted, recommended but can be ignored for other schemes.
+\item [TDCtype][Krimm]  \\\\ Ignore if TCC is used or if TDC with Torii model is used.
+\item [LongrangeCoupling] [TDC/TCC]  \\\\ Long range couplings, i.e. couplings between non-nearest neighbors are treated with TDC or TCC. TDC for the Skinner scheme and TCC for Jansen Scheme are recommended.
+\item [NearestNeighborCoupling] [GLDP/TDC/TCC] \\\\ GLDP is recommended, which is developed based on Ramachandran angles.
+\item [Hamiltonianfile] [File name] \\\\ Exactly the same as NISE input format: first column is time frame, and for every time frame there is the half triangle of the symmetric Hamiltonian matrix, i.e., $H(i,j)$, with $j>=i$. If the system of interest consists of both backbone ($N_{1}$) and side chain ($N_{2}$) amide units, then first $N_{1}$ elements correspond to backbone units and the rest correspond to side chain units. For example, if $H(0,0)$ is correspond to the first backbone amide I unit, $H(N_{1},N_{1})$ is the frequency of the first side chain amide I unit. $H(0,N_{1})$ is the coupling between the first backbone amide I unit and the first side chain amide I unit. 
+\item [Dipolefile] [File name] \\\\ Exactly the same as NISE input format: first column is time frame, and for every time frame, first x-component for all amide I units, then y-component for all amide I units, and then z-component for all amide I units appear. The values appear first for backbone amide I units, then for side chain units.
+\item [Format] [BIN/TEXT] \\\\ Output file formate can be chosen either binary or text. NISE requires Hamiltonian and transition dipoles in binary format.
+\item [Select][All/Water/Protein/Lipid/WaterAndIon/NA+/K+/CL-/noNNFS] \\\\ If selected, effects from only these parts are accounted for. Default is All.
+\end{description}
+For guidance, have a look at sample input files attached to this program.
+
+\bibliography{Rochester-9.bib}
+\end{document} 

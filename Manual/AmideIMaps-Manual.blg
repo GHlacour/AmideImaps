@@ -1,0 +1,48 @@
+This is BibTeX, Version 0.99d (TeX Live 2011)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: AmideIMaps-Manual.aux
+The style file: unsrt.bst
+Database file #1: Rochester-9.bib.bib
+Warning--I didn't find a database entry for ""
+You've used 6 entries,
+            1791 wiz_defined-function locations,
+            488 strings with 4945 characters,
+and the built_in function-call counts, 1409 in all, are:
+= -- 112
+> -- 78
+< -- 0
++ -- 28
+- -- 22
+* -- 109
+:= -- 246
+add.period$ -- 18
+call.type$ -- 6
+change.case$ -- 6
+chr.to.int$ -- 0
+cite$ -- 6
+duplicate$ -- 54
+empty$ -- 131
+format.name$ -- 22
+if$ -- 300
+int.to.chr$ -- 0
+int.to.str$ -- 6
+missing$ -- 6
+newline$ -- 33
+num.names$ -- 6
+pop$ -- 6
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 21
+stack$ -- 0
+substring$ -- 99
+swap$ -- 6
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 0
+while$ -- 12
+width$ -- 7
+write$ -- 68
+(There was 1 warning)

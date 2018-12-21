@@ -1,0 +1,30 @@
+###############################################################
+Forcefield  OPLSAA          # Only if OPLSAA used
+#Peptidetype Cyclic         # Only for cyclic peptide 
+#Prolinetype Dproline       # Only for Dproline
+Residues 412                # Total number of residues
+BackboneAmidebonds 408      # Total number of backbone amide I bonds
+SidechainAmidebonds 0       # Toal number of sidechain amide I bonds
+TotalAmidebonds 408         # Total number of amide I bonds
+COperChain 102              # Backbone chromophores per chain
+EstaticMap Jansen           # Electrostatic map
+JansenMapfile JansenMap.dat
+RoyMapfile ProlineMap.dat
+SkinnerMapfile SkinnerMap.dat
+TokmakoffMapfile TokmakoffMapCHARMM27.dat
+NNTreatment Map             # Nearest neighbor map used for NNFS
+Cutoff 2.0                  # Cutoff for calculating electric fields/gradients
+#TransitionDipole Torii      # Transition dipole map
+#TDCtype Krimm              # Only forKrimm TDC 
+LongrangeCoupling TCC       # Couplings between non-nearest neigbors
+NearestNeighborCoupling GLDP # Couplings between nearest neighbors
+Hamiltonianfile Energy.txt 
+Dipolefile Dipole.txt
+Format TEXT                 # Output format is in text; other option is BIN 
+Select All
+#Select CL-
+#Select K+
+#Select NA+
+#Select Lipid
+#Select Water
+#Select Protein
