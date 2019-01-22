@@ -696,15 +696,29 @@ void calcDiag(t_pbc *pbc,t_snap *snap,t_map *map,t_map *Promap, t_Skinner *Skinn
   }
 
   // Find charge group position
+  rvec tmpvec;
+  rvec refvec;
+  refvec[XX]=xG[0][XX];  //compare positions to reference to account for PBC
+  refvec[YY]=xG[0][YY];
+  refvec[ZZ]=xG[0][ZZ];
   j=0;   
   for (i=0;i<snap->Natoms;i++){ 
     NormFac[j]+=1.0;
-    chargeGroup[j][XX]+=xG[i][XX];
-    chargeGroup[j][YY]+=xG[i][YY];
-    chargeGroup[j][ZZ]+=xG[i][ZZ];
+    pbc_dx(pbc,xG[i],refvec,tmpvec); //xG-ref
+    tmpvec[XX] += refvec[XX];  //add ref back in, now with pbc accounted for
+    tmpvec[YY] += refvec[YY];
+    tmpvec[ZZ] += refvec[ZZ];
+    chargeGroup[j][XX]+=tmpvec[XX];
+    chargeGroup[j][YY]+=tmpvec[YY];
+    chargeGroup[j][ZZ]+=tmpvec[ZZ];
     AtomsInCgs[i]=j;
     //printf("atom %d charge group %d\n",i,AtomsInCgs[i]); 
-    if((i+1)==(top->cgs.index[j+1])) j+=1;
+    if((i+1)==(top->cgs.index[j+1])) {
+      j+=1;
+      refvec[XX]=xG[i+1][XX]; //update reference vec
+      refvec[YY]=xG[i+1][YY];
+      refvec[ZZ]=xG[i+1][ZZ];
+    }
   }
   // Normalize
   for (i=0;i<nchargeGroups;i++){
